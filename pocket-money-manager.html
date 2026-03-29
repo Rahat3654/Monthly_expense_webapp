@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pocket Money Manager</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      color: #2d3748;
+      min-height: 100vh;
+      padding-bottom: 32px;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      text-align: center;
+      padding: 22px 16px 18px;
+      box-shadow: 0 4px 12px rgba(79,70,229,.35);
+    }
+    header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: .5px; }
+    header p  { font-size: .82rem; opacity: .85; margin-top: 4px; }
+
+    /* ===== LAYOUT ===== */
+    .container { max-width: 480px; margin: 0 auto; padding: 20px 16px; }
+
+    /* ===== CARD BASE ===== */
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.08);
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: .78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: #718096;
+      margin-bottom: 6px;
+    }
+
+    /* ===== WALLET CARD ===== */
+    .wallet-card { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; cursor: pointer; }
+    .wallet-card .card-title { color: rgba(255,255,255,.75); }
+    .wallet-main-balance { font-size: 2.2rem; font-weight: 700; margin-bottom: 4px; }
+    .wallet-sub-label { font-size: .78rem; opacity: .8; }
+
+    .wallet-row { display: flex; gap: 12px; margin-top: 14px; }
+    .sub-wallet {
+      flex: 1; background: rgba(255,255,255,.18);
+      border-radius: 12px; padding: 12px 14px; cursor: pointer;
+      transition: background .2s;
+    }
+    .sub-wallet:hover { background: rgba(255,255,255,.28); }
+    .sub-wallet .sub-title { font-size: .72rem; opacity: .8; margin-bottom: 4px; }
+    .sub-wallet .sub-balance { font-size: 1.1rem; font-weight: 600; }
+
+    /* ===== INCOME CARD ===== */
+    .income-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid #edf2f7;
+    }
+    .income-row:last-of-type { border-bottom: none; }
+    .income-label { font-size: .9rem; font-weight: 500; }
+    .income-input {
+      width: 120px; text-align: right; border: 1px solid #e2e8f0;
+      border-radius: 8px; padding: 6px 10px; font-size: .9rem; color: #2d3748;
+      outline: none; transition: border-color .2s;
+    }
+    .income-input:focus { border-color: #4f46e5; }
+    .income-total {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 12px; padding-top: 12px; border-top: 2px solid #e2e8f0;
+      font-weight: 700; font-size: 1rem;
+    }
+    .income-total span:last-child { color: #4f46e5; font-size: 1.1rem; }
+
+    /* ===== EXPENSE SECTION ===== */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+    }
+    .section-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .btn-add {
+      width: 36px; height: 36px; border-radius: 50%; background: #4f46e5;
+      color: #fff; border: none; font-size: 1.4rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 10px rgba(79,70,229,.35); transition: transform .15s;
+    }
+    .btn-add:hover { transform: scale(1.1); }
+
+    .expense-item {
+      display: flex; align-items: center; gap: 10px;
+      background: #fff; border-radius: 14px; padding: 12px 14px;
+      margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.07);
+      animation: slideIn .25s ease;
+    }
+    @keyframes slideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
+
+    .expense-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg,#e0e7ff,#c7d2fe);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .expense-info { flex: 1; min-width: 0; }
+    .expense-title { font-size: .9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .expense-date  { font-size: .72rem; color: #a0aec0; margin-top: 2px; }
+    .expense-amount { font-size: 1rem; font-weight: 700; color: #e53e3e; flex-shrink: 0; }
+    .expense-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .btn-icon {
+      width: 30px; height: 30px; border-radius: 8px; border: none;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; transition: opacity .15s;
+    }
+    .btn-icon:hover { opacity: .75; }
+    .btn-edit   { background: #ebf4ff; color: #3182ce; }
+    .btn-delete { background: #fff5f5; color: #e53e3e; }
+
+    .no-expense { text-align: center; color: #a0aec0; font-size: .9rem; padding: 20px 0; }
+
+    /* ===== MODAL OVERLAY ===== */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      display: flex; align-items: flex-end; justify-content: center;
+      z-index: 100; opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: #fff; border-radius: 24px 24px 0 0;
+      width: 100%; max-width: 480px; padding: 24px 20px 32px;
+      transform: translateY(100%); transition: transform .3s ease;
+    }
+    .modal-overlay.active .modal { transform: translateY(0); }
+
+    .modal-handle {
+      width: 40px; height: 4px; background: #e2e8f0;
+      border-radius: 2px; margin: 0 auto 18px;
+    }
+    .modal h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 18px; }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { font-size: .82rem; font-weight: 600; color: #718096; display: block; margin-bottom: 6px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 11px 14px; border: 1.5px solid #e2e8f0;
+      border-radius: 10px; font-size: 1rem; outline: none; transition: border-color .2s;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: #4f46e5; }
+
+    .type-toggle { display: flex; gap: 10px; }
+    .type-btn {
+      flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid #e2e8f0;
+      background: #fff; font-size: .9rem; font-weight: 600; cursor: pointer;
+      transition: all .2s;
+    }
+    .type-btn.active-add    { background: #f0fff4; border-color: #38a169; color: #38a169; }
+    .type-btn.active-withdraw { background: #fff5f5; border-color: #e53e3e; color: #e53e3e; }
+
+    /* ===== CALCULATOR KEYPAD ===== */
+    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+    .key {
+      padding: 14px; border-radius: 12px; border: none;
+      background: #f7fafc; font-size: 1.1rem; font-weight: 600;
+      cursor: pointer; transition: background .15s, transform .1s;
+    }
+    .key:active { transform: scale(.94); background: #e2e8f0; }
+    .key-zero  { grid-column: span 2; }
+    .key-clear { background: #fff5f5; color: #e53e3e; }
+    .key-back  { background: #ebf4ff; color: #3182ce; }
+
+    .keypad-display {
+      background: #f7fafc; border-radius: 12px; padding: 12px 16px;
+      font-size: 1.6rem; font-weight: 700; text-align: right;
+      min-height: 54px; margin-bottom: 6px; word-break: break-all;
+    }
+
+    /* ===== ACTION BUTTONS ===== */
+    .btn-primary {
+      width: 100%; padding: 14px; border-radius: 12px; border: none;
+      background: linear-gradient(135deg,#4f46e5,#7c3aed); color: #fff;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      transition: opacity .2s; margin-top: 4px;
+    }
+    .btn-primary:hover { opacity: .9; }
+    .btn-cancel {
+      width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #e2e8f0;
+      background: #fff; color: #718096; font-size: .95rem; font-weight: 600;
+      cursor: pointer; margin-top: 8px;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
+      background: #2d3748; color: #fff; padding: 10px 22px; border-radius: 50px;
+      font-size: .85rem; font-weight: 500; z-index: 200; opacity: 0;
+      transition: all .3s ease; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ===== RESPONSIVE TWEAKS ===== */
+    @media (min-width: 480px) {
+      .modal { border-radius: 24px; margin-bottom: 24px; }
+      .modal-overlay { align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==============================
+     HEADER
+=============================== -->
+<header>
+  <h1>💰 Pocket Money Manager</h1>
+  <p>Track your wallet, income &amp; expenses</p>
+</header>
+
+<div class="container">
+
+  <!-- ==============================
+       CASH WALLET CARD
+  =============================== -->
+  <div class="card wallet-card" id="cashWalletCard" onclick="openWalletModal('cash')">
+    <div class="card-title">Cash Wallet</div>
+    <div class="wallet-main-balance" id="cashBalance" aria-label="Cash wallet balance: 0.00 BDT">৳0.00</div>
+    <div class="wallet-sub-label">Tap to add / withdraw</div>
+    <div class="wallet-row">
+      <!-- bKash sub-card -->
+      <div class="sub-wallet" id="bkashCard" onclick="event.stopPropagation(); openWalletModal('bkash')">
+        <div class="sub-title">📱 bKash</div>
+        <div class="sub-balance" id="bkashBalance" aria-label="bKash balance: 0.00 BDT">৳0.00</div>
+      </div>
+      <!-- Bank sub-card -->
+      <div class="sub-wallet" id="bankCard" onclick="event.stopPropagation(); openWalletModal('bank')">
+        <div class="sub-title">🏦 Bank</div>
+        <div class="sub-balance" id="bankBalance" aria-label="Bank balance: 0.00 BDT">৳0.00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       MONTHLY INCOME CARD
+  =============================== -->
+  <div class="card">
+    <div class="card-title">Monthly Income</div>
+
+    <div class="income-row">
+      <label class="income-label" for="incomeTuition">📚 Tuition / Coaching</label>
+      <input class="income-input" id="incomeTuition" type="number" min="0" placeholder="0" aria-label="Tuition/Coaching income in BDT" oninput="updateIncome()" />
+    </div>
+    <div class="income-row">
+      <label class="income-label" for="incomeParents">👨‍👩‍👦 Parents</label>
+      <input class="income-input" id="incomeParents" type="number" min="0" placeholder="0" aria-label="Parents income in BDT" oninput="updateIncome()" />
+    </div>
+    <div class="income-row">
+      <label class="income-label" for="incomeBusiness">💼 Business</label>
+      <input class="income-input" id="incomeBusiness" type="number" min="0" placeholder="0" aria-label="Business income in BDT" oninput="updateIncome()" />
+    </div>
+
+    <div class="income-total">
+      <span>Total Monthly Income</span>
+      <span id="totalIncome">৳0.00</span>
+    </div>
+  </div>
+
+  <!-- ==============================
+       EXPENSES SECTION
+  =============================== -->
+  <div class="section-header">
+    <h2>💸 Expenses</h2>
+    <button class="btn-add" onclick="openExpenseModal()" title="Add expense" aria-label="Add expense">+</button>
+  </div>
+
+  <div id="expenseList">
+    <div class="no-expense" id="noExpenseMsg">No expenses yet. Tap "+" to add one.</div>
+  </div>
+
+</div><!-- /.container -->
+
+<!-- ==============================
+     WALLET MODAL (Add / Withdraw)
+=============================== -->
+<div class="modal-overlay" id="walletModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 id="walletModalTitle">Add Money</h2>
+
+    <!-- Type toggle -->
+    <div class="form-group">
+      <label>Transaction Type</label>
+      <div class="type-toggle">
+        <button class="type-btn active-add" id="typeAdd" onclick="setWalletType('add')">➕ Add</button>
+        <button class="type-btn" id="typeWithdraw" onclick="setWalletType('withdraw')">➖ Withdraw</button>
+      </div>
+    </div>
+
+    <!-- Keypad display -->
+    <div class="form-group">
+      <label>Amount (BDT)</label>
+      <div class="keypad-display" id="walletDisplay">0</div>
+      <div class="keypad" id="walletKeypad"></div>
+    </div>
+
+    <button class="btn-primary" onclick="saveWalletTransaction()">Save</button>
+    <button class="btn-cancel" onclick="closeModal('walletModal')">Cancel</button>
+  </div>
+</div>
+
+<!-- ==============================
+     EXPENSE MODAL (Add / Edit)
+=============================== -->
+<div class="modal-overlay" id="expenseModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 id="expenseModalTitle">Add Expense</h2>
+
+    <div class="form-group">
+      <label for="expenseTitle">Title</label>
+      <input type="text" id="expenseTitle" placeholder="e.g. Food, Transport…" maxlength="30" aria-label="Expense title" />
+    </div>
+
+    <!-- Keypad display -->
+    <div class="form-group">
+      <label>Amount (BDT)</label>
+      <div class="keypad-display" id="expenseDisplay">0</div>
+      <div class="keypad" id="expenseKeypad"></div>
+    </div>
+
+    <button class="btn-primary" onclick="saveExpense()">Save Expense</button>
+    <button class="btn-cancel" onclick="closeModal('expenseModal')">Cancel</button>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<!-- ==============================
+     JAVASCRIPT
+=============================== -->
+<script>
+  /* =========================================
+     STATE — all app data lives here
+  ========================================= */
+  let state = {
+    wallet: { cash: 0, bkash: 0, bank: 0 },
+    income: { tuition: 0, parents: 0, business: 0 },
+    expenses: []   // { id, title, amount, date }
+  };
+
+  /* =========================================
+     STORAGE HELPERS
+  ========================================= */
+  function saveState() {
+    localStorage.setItem('pmm_state', JSON.stringify(state));
+  }
+
+  function loadState() {
+    const raw = localStorage.getItem('pmm_state');
+    if (raw) {
+      try { state = JSON.parse(raw); } catch(e) {
+        console.error('Could not load saved data; starting fresh.', e);
+        showToast('⚠️ Saved data could not be loaded. Starting fresh.');
+      }
+    }
+  }
+
+  /* =========================================
+     ID GENERATOR — timestamp + random to avoid collisions
+  ========================================= */
+  function generateId() {
+    return Date.now() * 1000 + Math.floor(Math.random() * 1000);
+  }
+  function fmt(n) {
+    return '৳' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  /* =========================================
+     RENDER — reflect state onto the DOM
+  ========================================= */
+  function render() {
+    // Wallet balances
+    const cashEl  = document.getElementById('cashBalance');
+    const bkashEl = document.getElementById('bkashBalance');
+    const bankEl  = document.getElementById('bankBalance');
+    cashEl.textContent  = fmt(state.wallet.cash);
+    bkashEl.textContent = fmt(state.wallet.bkash);
+    bankEl.textContent  = fmt(state.wallet.bank);
+    cashEl.setAttribute('aria-label',  'Cash wallet balance: ' + fmt(state.wallet.cash));
+    bkashEl.setAttribute('aria-label', 'bKash balance: '       + fmt(state.wallet.bkash));
+    bankEl.setAttribute('aria-label',  'Bank balance: '        + fmt(state.wallet.bank));
+
+    // Income inputs & total
+    document.getElementById('incomeTuition').value  = state.income.tuition  || '';
+    document.getElementById('incomeParents').value  = state.income.parents  || '';
+    document.getElementById('incomeBusiness').value = state.income.business || '';
+    const total = (+state.income.tuition) + (+state.income.parents) + (+state.income.business);
+    document.getElementById('totalIncome').textContent = fmt(total);
+
+    // Expense list
+    renderExpenses();
+  }
+
+  function renderExpenses() {
+    const list = document.getElementById('expenseList');
+    const noMsg = document.getElementById('noExpenseMsg');
+
+    // Remove all rendered expense items (keep #noExpenseMsg)
+    list.querySelectorAll('.expense-item').forEach(el => el.remove());
+
+    if (!state.expenses.length) {
+      noMsg.style.display = 'block';
+      return;
+    }
+    noMsg.style.display = 'none';
+
+    // Render newest first
+    const sorted = [...state.expenses].sort((a, b) => b.id - a.id);
+    sorted.forEach(exp => {
+      const div = document.createElement('div');
+      div.className = 'expense-item';
+      div.setAttribute('data-id', exp.id);
+      div.innerHTML = `
+        <div class="expense-icon">💸</div>
+        <div class="expense-info">
+          <div class="expense-title">${escHtml(exp.title)}</div>
+          <div class="expense-date">${exp.date}</div>
+        </div>
+        <div class="expense-amount">${fmt(exp.amount)}</div>
+        <div class="expense-actions">
+          <button class="btn-icon btn-edit"   onclick="editExpense(${exp.id})"   title="Edit expense"   aria-label="Edit expense ${escHtml(exp.title)}">✏️</button>
+          <button class="btn-icon btn-delete" onclick="deleteExpense(${exp.id})" title="Delete expense" aria-label="Delete expense ${escHtml(exp.title)}">🗑️</button>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  /* Escape HTML to prevent XSS from user-supplied titles */
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* =========================================
+     INCOME HANDLERS
+  ========================================= */
+  function updateIncome() {
+    state.income.tuition  = parseFloat(document.getElementById('incomeTuition').value)  || 0;
+    state.income.parents  = parseFloat(document.getElementById('incomeParents').value)  || 0;
+    state.income.business = parseFloat(document.getElementById('incomeBusiness').value) || 0;
+    const total = state.income.tuition + state.income.parents + state.income.business;
+    document.getElementById('totalIncome').textContent = fmt(total);
+    saveState();
+  }
+
+  /* =========================================
+     CALCULATOR KEYPAD BUILDER
+  ========================================= */
+  function buildKeypad(containerId, displayId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+
+    const keys = ['7','8','9','4','5','6','1','2','3','C','0','.','⌫'];
+    keys.forEach(k => {
+      const btn = document.createElement('button');
+      btn.className = 'key';
+      btn.textContent = k;
+
+      if (k === '0') btn.classList.add('key-zero');
+      if (k === 'C') btn.classList.add('key-clear');
+      if (k === '⌫') btn.classList.add('key-back');
+
+      btn.onclick = () => handleKey(k, displayId);
+      container.appendChild(btn);
+    });
+  }
+
+  function handleKey(key, displayId) {
+    const disp = document.getElementById(displayId);
+    let val = disp.textContent;
+
+    if (key === 'C') {
+      disp.textContent = '0';
+    } else if (key === '⌫') {
+      disp.textContent = val.length > 1 ? val.slice(0, -1) : '0';
+    } else if (key === '.') {
+      if (!val.includes('.')) disp.textContent = val + '.';
+    } else {
+      // Prevent leading zeros (unless decimal)
+      disp.textContent = (val === '0') ? key : val + key;
+    }
+  }
+
+  /* =========================================
+     WALLET MODAL
+  ========================================= */
+  let activeWallet = 'cash'; // which wallet is being edited
+  let walletType   = 'add';  // 'add' or 'withdraw'
+
+  function openWalletModal(wallet) {
+    activeWallet = wallet;
+    walletType   = 'add';
+
+    const labels = { cash:'Cash Wallet', bkash:'bKash', bank:'Bank' };
+    document.getElementById('walletModalTitle').textContent = 'Manage ' + labels[wallet];
+
+    // Reset type toggle
+    setWalletType('add');
+
+    // Reset display & build keypad
+    document.getElementById('walletDisplay').textContent = '0';
+    buildKeypad('walletKeypad', 'walletDisplay');
+
+    openModal('walletModal');
+  }
+
+  function setWalletType(type) {
+    walletType = type;
+    const btnAdd      = document.getElementById('typeAdd');
+    const btnWithdraw = document.getElementById('typeWithdraw');
+    btnAdd.className      = 'type-btn' + (type === 'add'      ? ' active-add'      : '');
+    btnWithdraw.className = 'type-btn' + (type === 'withdraw' ? ' active-withdraw' : '');
+  }
+
+  function saveWalletTransaction() {
+    const amount = parseFloat(document.getElementById('walletDisplay').textContent);
+    if (!amount || amount <= 0) { showToast('Please enter a valid amount.'); return; }
+
+    if (walletType === 'add') {
+      state.wallet[activeWallet] += amount;
+    } else {
+      // Prevent negative balance
+      if (state.wallet[activeWallet] < amount) {
+        showToast('⚠️ Insufficient balance!'); return;
+      }
+      state.wallet[activeWallet] -= amount;
+    }
+
+    saveState();
+    render();
+    closeModal('walletModal');
+    showToast(walletType === 'add' ? '✅ Money added!' : '✅ Withdrawn!');
+  }
+
+  /* =========================================
+     EXPENSE MODAL
+  ========================================= */
+  let editingExpenseId = null; // null = adding new
+
+  function openExpenseModal() {
+    editingExpenseId = null;
+    document.getElementById('expenseModalTitle').textContent = 'Add Expense';
+    document.getElementById('expenseTitle').value = '';
+    document.getElementById('expenseDisplay').textContent = '0';
+    buildKeypad('expenseKeypad', 'expenseDisplay');
+    openModal('expenseModal');
+  }
+
+  function editExpense(id) {
+    const exp = state.expenses.find(e => e.id === id);
+    if (!exp) return;
+
+    editingExpenseId = id;
+    document.getElementById('expenseModalTitle').textContent = 'Edit Expense';
+    document.getElementById('expenseTitle').value = exp.title;
+    document.getElementById('expenseDisplay').textContent = String(exp.amount);
+    buildKeypad('expenseKeypad', 'expenseDisplay');
+    openModal('expenseModal');
+  }
+
+  function saveExpense() {
+    const title  = document.getElementById('expenseTitle').value.trim();
+    const amount = parseFloat(document.getElementById('expenseDisplay').textContent);
+
+    if (!title)              { showToast('Please enter a title.'); return; }
+    if (!amount || amount <= 0) { showToast('Please enter a valid amount.'); return; }
+
+    if (editingExpenseId === null) {
+      // ---- NEW EXPENSE ----
+      if (state.wallet.cash < amount) {
+        showToast('⚠️ Not enough cash balance!'); return;
+      }
+      state.wallet.cash -= amount;
+      state.expenses.push({
+        id:     generateId(),
+        title:  title,
+        amount: amount,
+        date:   new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
+      });
+      showToast('✅ Expense added!');
+    } else {
+      // ---- EDIT EXPENSE ----
+      const exp = state.expenses.find(e => e.id === editingExpenseId);
+      if (!exp) return;
+
+      // Restore old amount, then deduct new amount
+      const diff = amount - exp.amount;
+      if (diff > 0 && state.wallet.cash < diff) {
+        showToast('⚠️ Not enough cash balance!'); return;
+      }
+      state.wallet.cash -= diff;
+      exp.title  = title;
+      exp.amount = amount;
+      exp.date   = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+      showToast('✅ Expense updated!');
+    }
+
+    saveState();
+    render();
+    closeModal('expenseModal');
+  }
+
+  function deleteExpense(id) {
+    const exp = state.expenses.find(e => e.id === id);
+    if (!exp) return;
+
+    // Confirm before permanently deleting
+    if (!confirm(`Delete "${exp.title}" (${fmt(exp.amount)})?\n\nThe amount will be restored to your Cash Wallet.`)) return;
+
+    // Restore deducted amount to cash wallet
+    state.wallet.cash += exp.amount;
+    state.expenses = state.expenses.filter(e => e.id !== id);
+
+    saveState();
+    render();
+    showToast('🗑️ Expense deleted & balance restored.');
+  }
+
+  /* =========================================
+     MODAL HELPERS
+  ========================================= */
+  function openModal(id) {
+    document.getElementById(id).classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Close modal when clicking outside (on overlay)
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) closeModal(this.id);
+    });
+  });
+
+  /* =========================================
+     TOAST
+  ========================================= */
+  let toastTimer = null;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  /* =========================================
+     INIT
+  ========================================= */
+  loadState();
+  render();
+</script>
+</body>
+</html>
