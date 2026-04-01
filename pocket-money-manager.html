@@ -113,6 +113,7 @@
     .expense-title { font-size: .9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .expense-date  { font-size: .72rem; color: #a0aec0; margin-top: 2px; }
     .expense-amount { font-size: 1rem; font-weight: 700; color: #e53e3e; flex-shrink: 0; }
+    .expense-amount.refund { color: #38a169; }
     .expense-actions { display: flex; gap: 6px; flex-shrink: 0; }
     .btn-icon {
       width: 30px; height: 30px; border-radius: 8px; border: none;
@@ -161,8 +162,19 @@
       background: #fff; font-size: .9rem; font-weight: 600; cursor: pointer;
       transition: all .2s;
     }
-    .type-btn.active-add    { background: #f0fff4; border-color: #38a169; color: #38a169; }
+    .type-btn.active-add      { background: #f0fff4; border-color: #38a169; color: #38a169; }
     .type-btn.active-withdraw { background: #fff5f5; border-color: #e53e3e; color: #e53e3e; }
+    .type-btn.active-subtract { background: #fff5f5; border-color: #e53e3e; color: #e53e3e; }
+
+    /* ===== EXPENSE TOTAL BOX ===== */
+    .expense-total-box {
+      background: linear-gradient(135deg,#fff5f5,#fed7d7);
+      border: 1.5px solid #feb2b2; border-radius: 12px;
+      padding: 8px 16px; text-align: center;
+      min-width: 120px;
+    }
+    .expense-total-label { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: #c53030; margin-bottom: 2px; }
+    .expense-total-amount { font-size: 1.15rem; font-weight: 700; color: #e53e3e; }
 
     /* ===== CALCULATOR KEYPAD ===== */
     .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
@@ -275,6 +287,10 @@
   =============================== -->
   <div class="section-header">
     <h2>💸 Expenses</h2>
+    <div class="expense-total-box" id="expenseTotalBox">
+      <div class="expense-total-label">Total Expenses</div>
+      <div class="expense-total-amount" id="expenseTotalAmount">৳0.00</div>
+    </div>
     <button class="btn-add" onclick="openExpenseModal()" title="Add expense" aria-label="Add expense">+</button>
   </div>
 
@@ -326,6 +342,15 @@
       <input type="text" id="expenseTitle" placeholder="e.g. Food, Transport…" maxlength="30" aria-label="Expense title" />
     </div>
 
+    <!-- Type toggle -->
+    <div class="form-group">
+      <label>Transaction Type</label>
+      <div class="type-toggle">
+        <button class="type-btn active-add" id="expTypeAdd" onclick="setExpenseType('add')">➕ Add Expense</button>
+        <button class="type-btn" id="expTypeSubtract" onclick="setExpenseType('subtract')">➖ Refund/Subtract</button>
+      </div>
+    </div>
+
     <!-- Keypad display -->
     <div class="form-group">
       <label>Amount (BDT)</label>
@@ -351,7 +376,7 @@
   let state = {
     wallet: { cash: 0, bkash: 0, bank: 0 },
     income: { tuition: 0, parents: 0, business: 0 },
-    expenses: []   // { id, title, amount, date }
+    expenses: []   // { id, title, amount, type, date }  — type: 'add' | 'subtract'
   };
 
   /* =========================================
@@ -416,6 +441,7 @@
 
     if (!state.expenses.length) {
       noMsg.style.display = 'block';
+      updateExpenseTotal();
       return;
     }
     noMsg.style.display = 'none';
@@ -423,16 +449,17 @@
     // Render newest first
     const sorted = [...state.expenses].sort((a, b) => b.id - a.id);
     sorted.forEach(exp => {
+      const isSubtract = exp.type === 'subtract';
       const div = document.createElement('div');
       div.className = 'expense-item';
       div.setAttribute('data-id', exp.id);
       div.innerHTML = `
-        <div class="expense-icon">💸</div>
+        <div class="expense-icon">${isSubtract ? '🔄' : '💸'}</div>
         <div class="expense-info">
           <div class="expense-title">${escHtml(exp.title)}</div>
-          <div class="expense-date">${exp.date}</div>
+          <div class="expense-date">${exp.date}${isSubtract ? ' · Refund' : ''}</div>
         </div>
-        <div class="expense-amount">${fmt(exp.amount)}</div>
+        <div class="expense-amount${isSubtract ? ' refund' : ''}">${isSubtract ? '+' : '-'}${fmt(exp.amount)}</div>
         <div class="expense-actions">
           <button class="btn-icon btn-edit"   onclick="editExpense(${exp.id})"   title="Edit expense"   aria-label="Edit expense ${escHtml(exp.title)}">✏️</button>
           <button class="btn-icon btn-delete" onclick="deleteExpense(${exp.id})" title="Delete expense" aria-label="Delete expense ${escHtml(exp.title)}">🗑️</button>
@@ -440,6 +467,19 @@
       `;
       list.appendChild(div);
     });
+
+    updateExpenseTotal();
+  }
+
+  function calculateTotalExpenses() {
+    return state.expenses.reduce((sum, exp) => {
+      return exp.type === 'subtract' ? sum - exp.amount : sum + exp.amount;
+    }, 0);
+  }
+
+  function updateExpenseTotal() {
+    const total = calculateTotalExpenses();
+    document.getElementById('expenseTotalAmount').textContent = fmt(total);
   }
 
   /* Escape HTML to prevent XSS from user-supplied titles */
@@ -554,12 +594,22 @@
      EXPENSE MODAL
   ========================================= */
   let editingExpenseId = null; // null = adding new
+  let expenseType = 'add';     // 'add' or 'subtract'
+
+  function setExpenseType(type) {
+    expenseType = type;
+    const btnAdd      = document.getElementById('expTypeAdd');
+    const btnSubtract = document.getElementById('expTypeSubtract');
+    btnAdd.className      = 'type-btn' + (type === 'add'      ? ' active-add'      : '');
+    btnSubtract.className = 'type-btn' + (type === 'subtract' ? ' active-subtract' : '');
+  }
 
   function openExpenseModal() {
     editingExpenseId = null;
     document.getElementById('expenseModalTitle').textContent = 'Add Expense';
     document.getElementById('expenseTitle').value = '';
     document.getElementById('expenseDisplay').textContent = '0';
+    setExpenseType('add');
     buildKeypad('expenseKeypad', 'expenseDisplay');
     openModal('expenseModal');
   }
@@ -572,6 +622,7 @@
     document.getElementById('expenseModalTitle').textContent = 'Edit Expense';
     document.getElementById('expenseTitle').value = exp.title;
     document.getElementById('expenseDisplay').textContent = String(exp.amount);
+    setExpenseType(exp.type || 'add');
     buildKeypad('expenseKeypad', 'expenseDisplay');
     openModal('expenseModal');
   }
@@ -585,30 +636,54 @@
 
     if (editingExpenseId === null) {
       // ---- NEW EXPENSE ----
-      if (state.wallet.cash < amount) {
-        showToast('⚠️ Not enough cash balance!'); return;
+      if (expenseType === 'add') {
+        if (state.wallet.cash < amount) {
+          showToast('⚠️ Not enough cash balance!'); return;
+        }
+        state.wallet.cash -= amount;
+      } else {
+        // subtract/refund: money comes back to wallet
+        state.wallet.cash += amount;
       }
-      state.wallet.cash -= amount;
       state.expenses.push({
         id:     generateId(),
         title:  title,
         amount: amount,
+        type:   expenseType,
         date:   new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
       });
-      showToast('✅ Expense added!');
+      showToast(expenseType === 'add' ? '✅ Expense added!' : '✅ Refund recorded!');
     } else {
       // ---- EDIT EXPENSE ----
       const exp = state.expenses.find(e => e.id === editingExpenseId);
       if (!exp) return;
 
-      // Restore old amount, then deduct new amount
-      const diff = amount - exp.amount;
-      if (diff > 0 && state.wallet.cash < diff) {
-        showToast('⚠️ Not enough cash balance!'); return;
+      const oldType   = exp.type || 'add';
+      const oldAmount = exp.amount;
+
+      // Reverse old effect on wallet
+      if (oldType === 'add') {
+        state.wallet.cash += oldAmount;
+      } else {
+        state.wallet.cash -= oldAmount;
       }
-      state.wallet.cash -= diff;
+
+      // Apply new effect on wallet
+      if (expenseType === 'add') {
+        if (state.wallet.cash < amount) {
+          // Rollback wallet reversal before returning
+          if (oldType === 'add') state.wallet.cash -= oldAmount;
+          else state.wallet.cash += oldAmount;
+          showToast('⚠️ Not enough cash balance!'); return;
+        }
+        state.wallet.cash -= amount;
+      } else {
+        state.wallet.cash += amount;
+      }
+
       exp.title  = title;
       exp.amount = amount;
+      exp.type   = expenseType;
       exp.date   = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
       showToast('✅ Expense updated!');
     }
@@ -622,16 +697,20 @@
     const exp = state.expenses.find(e => e.id === id);
     if (!exp) return;
 
-    // Confirm before permanently deleting
-    if (!confirm(`Delete "${exp.title}" (${fmt(exp.amount)})?\n\nThe amount will be restored to your Cash Wallet.`)) return;
+    const typeLabel = exp.type === 'subtract' ? 'refund' : 'expense';
+    if (!confirm(`Delete "${exp.title}" (${fmt(exp.amount)})?\n\nThe ${typeLabel} will be reversed in your Cash Wallet.`)) return;
 
-    // Restore deducted amount to cash wallet
-    state.wallet.cash += exp.amount;
+    // Reverse the expense's wallet effect
+    if ((exp.type || 'add') === 'add') {
+      state.wallet.cash += exp.amount;
+    } else {
+      state.wallet.cash -= exp.amount;
+    }
     state.expenses = state.expenses.filter(e => e.id !== id);
 
     saveState();
     render();
-    showToast('🗑️ Expense deleted & balance restored.');
+    showToast('🗑️ Deleted & wallet updated.');
   }
 
   /* =========================================
