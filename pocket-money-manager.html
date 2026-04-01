@@ -82,7 +82,7 @@
     }
     .income-total span:last-child { color: #4f46e5; font-size: 1.1rem; }
 
-    /* ===== EXPENSE SECTION HEADER ===== */
+    /* ===== EXPENSE SECTION ===== */
     .section-header {
       display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
     }
@@ -95,78 +95,29 @@
     }
     .btn-add:hover { transform: scale(1.1); }
 
-    /* ===== DAILY TOTAL BAR ===== */
-    .expense-total-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      color: #fff; border-radius: 14px; padding: 14px 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(79,70,229,.25);
-    }
-    .expense-total-bar .bar-label { font-size: .85rem; opacity: .9; font-weight: 500; }
-    .expense-total-bar .bar-amount { font-size: 1.4rem; font-weight: 700; }
-
-    /* ===== CATEGORY CARD ===== */
-    .category-card {
-      background: #fff; border-radius: 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,.08);
-      margin-bottom: 16px; overflow: hidden;
+    .expense-item {
+      display: flex; align-items: center; gap: 10px;
+      background: #fff; border-radius: 14px; padding: 12px 14px;
+      margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.07);
       animation: slideIn .25s ease;
     }
     @keyframes slideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
 
-    .category-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 16px; background: #f7fafc;
-      border-bottom: 1px solid #edf2f7;
-    }
-    .category-name {
-      font-size: 1rem; font-weight: 700; color: #2d3748;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .category-total { font-size: .82rem; color: #718096; font-weight: 500; margin-top: 2px; }
-    .category-actions { display: flex; gap: 6px; }
-
-    /* ===== TIME PERIOD SECTION ===== */
-    .period-section { border-bottom: 1px solid #edf2f7; }
-    .period-section:last-child { border-bottom: none; }
-
-    .period-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 16px;
-    }
-    .period-label {
-      display: flex; align-items: center; gap: 6px;
-      font-size: .88rem; font-weight: 600; color: #4a5568;
-    }
-    .period-range { font-size: .7rem; color: #a0aec0; font-weight: 400; }
-    .period-subtotal { font-size: .82rem; color: #e53e3e; font-weight: 600; }
-    .period-right-actions { display: flex; align-items: center; gap: 8px; }
-    .period-add-btn {
-      width: 26px; height: 26px; border-radius: 50%; background: #e0e7ff;
-      color: #4f46e5; border: none; font-size: 1.1rem; cursor: pointer;
+    .expense-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg,#e0e7ff,#c7d2fe);
       display: flex; align-items: center; justify-content: center;
-      transition: background .15s, transform .15s; flex-shrink: 0;
+      font-size: 1.1rem; flex-shrink: 0;
     }
-    .period-add-btn:hover { background: #c7d2fe; transform: scale(1.1); }
-
-    .period-entries { padding: 0 16px 10px; }
-
-    /* ===== ENTRY ROW ===== */
-    .entry-row {
-      display: flex; align-items: center;
-      padding: 8px 10px; border-radius: 10px; margin-bottom: 4px;
-      background: #f7fafc; gap: 10px;
-    }
-    .entry-time { font-size: .75rem; color: #a0aec0; flex-shrink: 0; }
-    .entry-amount { font-size: .95rem; font-weight: 700; color: #e53e3e; flex: 1; text-align: right; }
-    .entry-actions { display: flex; gap: 4px; flex-shrink: 0; }
-
-    /* ===== ICON BUTTONS ===== */
+    .expense-info { flex: 1; min-width: 0; }
+    .expense-title { font-size: .9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .expense-date  { font-size: .72rem; color: #a0aec0; margin-top: 2px; }
+    .expense-amount { font-size: 1rem; font-weight: 700; color: #e53e3e; flex-shrink: 0; }
+    .expense-actions { display: flex; gap: 6px; flex-shrink: 0; }
     .btn-icon {
-      width: 28px; height: 28px; border-radius: 8px; border: none;
+      width: 30px; height: 30px; border-radius: 8px; border: none;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
-      font-size: .8rem; transition: opacity .15s;
+      font-size: .85rem; transition: opacity .15s;
     }
     .btn-icon:hover { opacity: .75; }
     .btn-edit   { background: #ebf4ff; color: #3182ce; }
@@ -210,15 +161,8 @@
       background: #fff; font-size: .9rem; font-weight: 600; cursor: pointer;
       transition: all .2s;
     }
-    .type-btn.active-add      { background: #f0fff4; border-color: #38a169; color: #38a169; }
+    .type-btn.active-add    { background: #f0fff4; border-color: #38a169; color: #38a169; }
     .type-btn.active-withdraw { background: #fff5f5; border-color: #e53e3e; color: #e53e3e; }
-
-    /* ===== ENTRY MODAL CONTEXT BADGES ===== */
-    .entry-context { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-    .entry-context-badge {
-      padding: 6px 12px; border-radius: 20px; font-size: .82rem;
-      font-weight: 600; background: #e0e7ff; color: #4f46e5;
-    }
 
     /* ===== CALCULATOR KEYPAD ===== */
     .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
@@ -330,19 +274,12 @@
        EXPENSES SECTION
   =============================== -->
   <div class="section-header">
-    <h2>💸 Daily Expenses</h2>
-    <button class="btn-add" id="addCategoryBtn" title="Add expense category" aria-label="Add expense category">+</button>
+    <h2>💸 Expenses</h2>
+    <button class="btn-add" onclick="openExpenseModal()" title="Add expense" aria-label="Add expense">+</button>
   </div>
 
-  <!-- Total daily expense bar -->
-  <div class="expense-total-bar">
-    <span class="bar-label">Today's Total Expense</span>
-    <span class="bar-amount" id="dailyTotalDisplay">৳0.00</span>
-  </div>
-
-  <!-- Category cards rendered here -->
-  <div id="categoryList">
-    <div class="no-expense" id="noExpenseMsg">No expense categories yet. Tap "+" to add one.</div>
+  <div id="expenseList">
+    <div class="no-expense" id="noExpenseMsg">No expenses yet. Tap "+" to add one.</div>
   </div>
 
 </div><!-- /.container -->
@@ -355,6 +292,7 @@
     <div class="modal-handle"></div>
     <h2 id="walletModalTitle">Add Money</h2>
 
+    <!-- Type toggle -->
     <div class="form-group">
       <label>Transaction Type</label>
       <div class="type-toggle">
@@ -363,6 +301,7 @@
       </div>
     </div>
 
+    <!-- Keypad display -->
     <div class="form-group">
       <label>Amount (BDT)</label>
       <div class="keypad-display" id="walletDisplay">0</div>
@@ -375,36 +314,27 @@
 </div>
 
 <!-- ==============================
-     ADD CATEGORY MODAL
+     EXPENSE MODAL (Add / Edit)
 =============================== -->
-<div class="modal-overlay" id="addCategoryModal">
+<div class="modal-overlay" id="expenseModal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h2>Add Expense Category</h2>
-    <div class="form-group">
-      <label for="categoryNameInput">Category Name</label>
-      <input type="text" id="categoryNameInput" placeholder="e.g. Food, Transport, Rent…" maxlength="30" aria-label="Category name" />
-    </div>
-    <button class="btn-primary" onclick="saveCategory()">Save Category</button>
-    <button class="btn-cancel" onclick="closeModal('addCategoryModal')">Cancel</button>
-  </div>
-</div>
+    <h2 id="expenseModalTitle">Add Expense</h2>
 
-<!-- ==============================
-     ADD / EDIT ENTRY MODAL
-=============================== -->
-<div class="modal-overlay" id="entryModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <h2 id="entryModalTitle">Add Expense</h2>
-    <div class="entry-context" id="entryContext"></div>
+    <div class="form-group">
+      <label for="expenseTitle">Title</label>
+      <input type="text" id="expenseTitle" placeholder="e.g. Food, Transport…" maxlength="30" aria-label="Expense title" />
+    </div>
+
+    <!-- Keypad display -->
     <div class="form-group">
       <label>Amount (BDT)</label>
-      <div class="keypad-display" id="entryDisplay">0</div>
-      <div class="keypad" id="entryKeypad"></div>
+      <div class="keypad-display" id="expenseDisplay">0</div>
+      <div class="keypad" id="expenseKeypad"></div>
     </div>
-    <button class="btn-primary" onclick="saveEntry()">Save</button>
-    <button class="btn-cancel" onclick="closeModal('entryModal')">Cancel</button>
+
+    <button class="btn-primary" onclick="saveExpense()">Save Expense</button>
+    <button class="btn-cancel" onclick="closeModal('expenseModal')">Cancel</button>
   </div>
 </div>
 
@@ -421,11 +351,7 @@
   let state = {
     wallet: { cash: 0, bkash: 0, bank: 0 },
     income: { tuition: 0, parents: 0, business: 0 },
-    dailyExpenses: {
-      date: '',          // tracking date (YYYY-MM-DD), resets daily at 01:00
-      categories: {}     // { "Food": { morning: [], day: [], night: [] }, … }
-                         // each entry: { id: number, amount: number, time: string }
-    }
+    expenses: []   // { id, title, amount, date }
   };
 
   /* =========================================
@@ -438,111 +364,21 @@
   function loadState() {
     const raw = localStorage.getItem('pmm_state');
     if (raw) {
-      try {
-        const loaded = JSON.parse(raw);
-        state = loaded;
-        // Migrate from old 'expenses' array format if necessary
-        if (!state.dailyExpenses) {
-          state.dailyExpenses = { date: '', categories: {} };
-        }
-        if (!state.dailyExpenses.categories) {
-          state.dailyExpenses.categories = {};
-        }
-        delete state.expenses; // remove legacy field
-      } catch(e) {
+      try { state = JSON.parse(raw); } catch(e) {
         console.error('Could not load saved data; starting fresh.', e);
         showToast('⚠️ Saved data could not be loaded. Starting fresh.');
       }
     }
-    checkDailyReset();
   }
 
   /* =========================================
-     CONSTANTS
-  ========================================= */
-  const TRACKING_DAY_START_HOUR  = 1;     // daily tracking resets at 01:00
-  const RESET_CHECK_INTERVAL_MS  = 60000; // check for date change every minute
-
-  /* =========================================
-     DAILY RESET LOGIC
-     The tracking "day" starts at 01:00.
-     Before 01:00 is still considered the previous tracking day.
-  ========================================= */
-  function getTrackingDate() {
-    const now = new Date();
-    if (now.getHours() < TRACKING_DAY_START_HOUR) {
-      // Before 1 AM — still "yesterday" for tracking purposes
-      const d = new Date(now);
-      d.setDate(d.getDate() - 1);
-      return d.toISOString().split('T')[0];
-    }
-    return now.toISOString().split('T')[0];
-  }
-
-  function checkDailyReset() {
-    const today = getTrackingDate();
-    if (state.dailyExpenses.date !== today) {
-      // New tracking day — wipe daily expenses, start fresh
-      state.dailyExpenses = { date: today, categories: {} };
-      saveState();
-    }
-  }
-
-  /* =========================================
-     ID GENERATOR
+     ID GENERATOR — timestamp + random to avoid collisions
   ========================================= */
   function generateId() {
     return Date.now() * 1000 + Math.floor(Math.random() * 1000);
   }
-
   function fmt(n) {
     return '৳' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  }
-
-  /* =========================================
-     TIME PERIOD HELPERS
-  ========================================= */
-  const PERIODS = ['morning', 'day', 'night'];
-  const PERIOD_META = {
-    morning: { emoji: '🌅', label: 'Morning', range: '00:00–11:59' },
-    day:     { emoji: '☀️', label: 'Day',     range: '12:00–17:59' },
-    night:   { emoji: '🌙', label: 'Night',   range: '18:00–23:59' }
-  };
-
-  function getCurrentPeriod() {
-    const h = new Date().getHours();
-    if (h < 12) return 'morning';
-    if (h < 18) return 'day';
-    return 'night';
-  }
-
-  function getCurrentTimeStr() {
-    return new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-  }
-
-  /* =========================================
-     DAILY TOTAL HELPERS
-  ========================================= */
-  function getDailyTotal() {
-    let total = 0;
-    Object.values(state.dailyExpenses.categories).forEach(cat => {
-      PERIODS.forEach(p => { (cat[p] || []).forEach(e => { total += e.amount; }); });
-    });
-    return total;
-  }
-
-  function getCategoryTotal(catName) {
-    let total = 0;
-    const cat = state.dailyExpenses.categories[catName];
-    if (!cat) return 0;
-    PERIODS.forEach(p => { (cat[p] || []).forEach(e => { total += e.amount; }); });
-    return total;
-  }
-
-  function getPeriodTotal(catName, period) {
-    const cat = state.dailyExpenses.categories[catName];
-    if (!cat || !cat[period]) return 0;
-    return cat[period].reduce((s, e) => s + e.amount, 0);
   }
 
   /* =========================================
@@ -564,158 +400,53 @@
     document.getElementById('incomeTuition').value  = state.income.tuition  || '';
     document.getElementById('incomeParents').value  = state.income.parents  || '';
     document.getElementById('incomeBusiness').value = state.income.business || '';
-    const incTotal = (+state.income.tuition) + (+state.income.parents) + (+state.income.business);
-    document.getElementById('totalIncome').textContent = fmt(incTotal);
+    const total = (+state.income.tuition) + (+state.income.parents) + (+state.income.business);
+    document.getElementById('totalIncome').textContent = fmt(total);
 
-    // Daily total expense
-    document.getElementById('dailyTotalDisplay').textContent = fmt(getDailyTotal());
-
-    // Category cards
-    renderCategories();
+    // Expense list
+    renderExpenses();
   }
 
-  function renderCategories() {
-    const list  = document.getElementById('categoryList');
+  function renderExpenses() {
+    const list = document.getElementById('expenseList');
     const noMsg = document.getElementById('noExpenseMsg');
-    const cats  = state.dailyExpenses.categories;
-    const names = Object.keys(cats);
 
-    // Remove existing category cards (keep #noExpenseMsg)
-    list.querySelectorAll('.category-card').forEach(el => el.remove());
+    // Remove all rendered expense items (keep #noExpenseMsg)
+    list.querySelectorAll('.expense-item').forEach(el => el.remove());
 
-    if (!names.length) {
+    if (!state.expenses.length) {
       noMsg.style.display = 'block';
       return;
     }
     noMsg.style.display = 'none';
 
-    names.forEach(catName => {
-      const catTotal = getCategoryTotal(catName);
-      const card = document.createElement('div');
-      card.className = 'category-card';
-
-      /* ---- Category header ---- */
-      const headerDiv = document.createElement('div');
-      headerDiv.className = 'category-header';
-
-      const infoDiv = document.createElement('div');
-      const nameDiv = document.createElement('div');
-      nameDiv.className = 'category-name';
-      nameDiv.textContent = '💳 ' + catName;
-      const totalDiv = document.createElement('div');
-      totalDiv.className = 'category-total';
-      totalDiv.textContent = 'Total: ' + fmt(catTotal);
-      infoDiv.appendChild(nameDiv);
-      infoDiv.appendChild(totalDiv);
-
-      const actionsDiv = document.createElement('div');
-      actionsDiv.className = 'category-actions';
-      const delCatBtn = document.createElement('button');
-      delCatBtn.className = 'btn-icon btn-delete';
-      delCatBtn.title = 'Delete category';
-      delCatBtn.setAttribute('aria-label', 'Delete ' + catName + ' category');
-      delCatBtn.textContent = '🗑️';
-      delCatBtn.addEventListener('click', () => deleteCategory(catName));
-      actionsDiv.appendChild(delCatBtn);
-
-      headerDiv.appendChild(infoDiv);
-      headerDiv.appendChild(actionsDiv);
-      card.appendChild(headerDiv);
-
-      /* ---- Time period sections ---- */
-      PERIODS.forEach(period => {
-        const meta    = PERIOD_META[period];
-        const entries = (cats[catName][period] || []);
-        const pTotal  = getPeriodTotal(catName, period);
-
-        const periodDiv = document.createElement('div');
-        periodDiv.className = 'period-section';
-
-        // Period header row
-        const periodHdr = document.createElement('div');
-        periodHdr.className = 'period-header';
-
-        const labelDiv = document.createElement('div');
-        labelDiv.className = 'period-label';
-        const emojiSpan = document.createElement('span');
-        emojiSpan.textContent = meta.emoji;
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = meta.label;
-        const rangeSpan = document.createElement('span');
-        rangeSpan.className = 'period-range';
-        rangeSpan.textContent = meta.range;
-        labelDiv.appendChild(emojiSpan);
-        labelDiv.appendChild(nameSpan);
-        labelDiv.appendChild(rangeSpan);
-
-        const rightDiv = document.createElement('div');
-        rightDiv.className = 'period-right-actions';
-        if (entries.length > 0) {
-          const subTotal = document.createElement('span');
-          subTotal.className = 'period-subtotal';
-          subTotal.textContent = fmt(pTotal);
-          rightDiv.appendChild(subTotal);
-        }
-        const addBtn = document.createElement('button');
-        addBtn.className = 'period-add-btn';
-        addBtn.title = 'Add ' + meta.label + ' expense';
-        addBtn.setAttribute('aria-label', 'Add ' + meta.label + ' expense to ' + catName);
-        addBtn.textContent = '+';
-        addBtn.addEventListener('click', () => openAddEntryModal(catName, period));
-        rightDiv.appendChild(addBtn);
-
-        periodHdr.appendChild(labelDiv);
-        periodHdr.appendChild(rightDiv);
-        periodDiv.appendChild(periodHdr);
-
-        // Entry list
-        if (entries.length > 0) {
-          const entriesDiv = document.createElement('div');
-          entriesDiv.className = 'period-entries';
-          entries.forEach(entry => {
-            const row = document.createElement('div');
-            row.className = 'entry-row';
-
-            const timeSpan = document.createElement('span');
-            timeSpan.className = 'entry-time';
-            timeSpan.textContent = entry.time;
-
-            const amtSpan = document.createElement('span');
-            amtSpan.className = 'entry-amount';
-            amtSpan.textContent = fmt(entry.amount);
-
-            const entryActions = document.createElement('div');
-            entryActions.className = 'entry-actions';
-
-            const editBtn = document.createElement('button');
-            editBtn.className = 'btn-icon btn-edit';
-            editBtn.title = 'Edit entry';
-            editBtn.setAttribute('aria-label', 'Edit entry');
-            editBtn.textContent = '✏️';
-            editBtn.addEventListener('click', () => openEditEntryModal(catName, period, entry.id));
-
-            const delBtn = document.createElement('button');
-            delBtn.className = 'btn-icon btn-delete';
-            delBtn.title = 'Delete entry';
-            delBtn.setAttribute('aria-label', 'Delete entry');
-            delBtn.textContent = '🗑️';
-            delBtn.addEventListener('click', () => deleteEntry(catName, period, entry.id));
-
-            entryActions.appendChild(editBtn);
-            entryActions.appendChild(delBtn);
-            row.appendChild(timeSpan);
-            row.appendChild(amtSpan);
-            row.appendChild(entryActions);
-            entriesDiv.appendChild(row);
-          });
-          periodDiv.appendChild(entriesDiv);
-        }
-
-        card.appendChild(periodDiv);
-      });
-
-      list.appendChild(card);
+    // Render newest first
+    const sorted = [...state.expenses].sort((a, b) => b.id - a.id);
+    sorted.forEach(exp => {
+      const div = document.createElement('div');
+      div.className = 'expense-item';
+      div.setAttribute('data-id', exp.id);
+      div.innerHTML = `
+        <div class="expense-icon">💸</div>
+        <div class="expense-info">
+          <div class="expense-title">${escHtml(exp.title)}</div>
+          <div class="expense-date">${exp.date}</div>
+        </div>
+        <div class="expense-amount">${fmt(exp.amount)}</div>
+        <div class="expense-actions">
+          <button class="btn-icon btn-edit"   onclick="editExpense(${exp.id})"   title="Edit expense"   aria-label="Edit expense ${escHtml(exp.title)}">✏️</button>
+          <button class="btn-icon btn-delete" onclick="deleteExpense(${exp.id})" title="Delete expense" aria-label="Delete expense ${escHtml(exp.title)}">🗑️</button>
+        </div>
+      `;
+      list.appendChild(div);
     });
+  }
+
+  /* Escape HTML to prevent XSS from user-supplied titles */
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
   /* =========================================
@@ -781,9 +512,13 @@
     const labels = { cash:'Cash Wallet', bkash:'bKash', bank:'Bank' };
     document.getElementById('walletModalTitle').textContent = 'Manage ' + labels[wallet];
 
+    // Reset type toggle
     setWalletType('add');
+
+    // Reset display & build keypad
     document.getElementById('walletDisplay').textContent = '0';
     buildKeypad('walletKeypad', 'walletDisplay');
+
     openModal('walletModal');
   }
 
@@ -802,6 +537,7 @@
     if (walletType === 'add') {
       state.wallet[activeWallet] += amount;
     } else {
+      // Prevent negative balance
       if (state.wallet[activeWallet] < amount) {
         showToast('⚠️ Insufficient balance!'); return;
       }
@@ -815,132 +551,84 @@
   }
 
   /* =========================================
-     CATEGORY MANAGEMENT
+     EXPENSE MODAL
   ========================================= */
-  function openAddCategoryModal() {
-    document.getElementById('categoryNameInput').value = '';
-    openModal('addCategoryModal');
-    setTimeout(() => document.getElementById('categoryNameInput').focus(), 350);
+  let editingExpenseId = null; // null = adding new
+
+  function openExpenseModal() {
+    editingExpenseId = null;
+    document.getElementById('expenseModalTitle').textContent = 'Add Expense';
+    document.getElementById('expenseTitle').value = '';
+    document.getElementById('expenseDisplay').textContent = '0';
+    buildKeypad('expenseKeypad', 'expenseDisplay');
+    openModal('expenseModal');
   }
 
-  function saveCategory() {
-    const name = document.getElementById('categoryNameInput').value.trim();
-    if (!name) { showToast('Please enter a category name.'); return; }
+  function editExpense(id) {
+    const exp = state.expenses.find(e => e.id === id);
+    if (!exp) return;
 
-    const cats = state.dailyExpenses.categories;
-    if (cats[name]) { showToast('⚠️ Category already exists!'); return; }
-
-    cats[name] = { morning: [], day: [], night: [] };
-    saveState();
-    render();
-    closeModal('addCategoryModal');
-    showToast('✅ Category added!');
+    editingExpenseId = id;
+    document.getElementById('expenseModalTitle').textContent = 'Edit Expense';
+    document.getElementById('expenseTitle').value = exp.title;
+    document.getElementById('expenseDisplay').textContent = String(exp.amount);
+    buildKeypad('expenseKeypad', 'expenseDisplay');
+    openModal('expenseModal');
   }
 
-  function deleteCategory(catName) {
-    const cats = state.dailyExpenses.categories;
-    if (!cats[catName]) return;
+  function saveExpense() {
+    const title  = document.getElementById('expenseTitle').value.trim();
+    const amount = parseFloat(document.getElementById('expenseDisplay').textContent);
 
-    if (!confirm('Delete "' + catName + '" and all its entries?\n\nExpense amounts will be restored to your Cash Wallet.')) return;
-
-    // Restore all entry amounts to cash wallet
-    let total = 0;
-    PERIODS.forEach(p => { (cats[catName][p] || []).forEach(e => { total += e.amount; }); });
-    state.wallet.cash += total;
-
-    delete cats[catName];
-    saveState();
-    render();
-    showToast('🗑️ Category deleted & balance restored.');
-  }
-
-  /* =========================================
-     ENTRY MANAGEMENT
-  ========================================= */
-  // Context tracking for the entry modal
-  let entryCtx = { catName: null, period: null, entryId: null };
-
-  function openAddEntryModal(catName, period) {
-    entryCtx = { catName, period, entryId: null };
-    document.getElementById('entryModalTitle').textContent = 'Add Expense';
-    populateEntryContext(catName, period);
-    document.getElementById('entryDisplay').textContent = '0';
-    buildKeypad('entryKeypad', 'entryDisplay');
-    openModal('entryModal');
-  }
-
-  function openEditEntryModal(catName, period, entryId) {
-    const cat = state.dailyExpenses.categories[catName];
-    if (!cat) return;
-    const entry = (cat[period] || []).find(e => e.id === entryId);
-    if (!entry) return;
-
-    entryCtx = { catName, period, entryId };
-    document.getElementById('entryModalTitle').textContent = 'Edit Expense';
-    populateEntryContext(catName, period);
-    document.getElementById('entryDisplay').textContent = String(entry.amount);
-    buildKeypad('entryKeypad', 'entryDisplay');
-    openModal('entryModal');
-  }
-
-  function populateEntryContext(catName, period) {
-    const meta = PERIOD_META[period];
-    const ctx  = document.getElementById('entryContext');
-    ctx.replaceChildren(); // safely remove all children (avoids orphaned innerHTML)
-
-    const catBadge = document.createElement('span');
-    catBadge.className = 'entry-context-badge';
-    catBadge.textContent = '💳 ' + catName;
-
-    const periodBadge = document.createElement('span');
-    periodBadge.className = 'entry-context-badge';
-    periodBadge.textContent = meta.emoji + ' ' + meta.label;
-
-    ctx.appendChild(catBadge);
-    ctx.appendChild(periodBadge);
-  }
-
-  function saveEntry() {
-    const amount = parseFloat(document.getElementById('entryDisplay').textContent);
+    if (!title)              { showToast('Please enter a title.'); return; }
     if (!amount || amount <= 0) { showToast('Please enter a valid amount.'); return; }
 
-    const { catName, period, entryId } = entryCtx;
-    const cat = state.dailyExpenses.categories[catName];
-    if (!cat) return;
-    if (!cat[period]) cat[period] = [];
-
-    if (entryId === null) {
-      // New entry
-      if (state.wallet.cash < amount) { showToast('⚠️ Not enough cash balance!'); return; }
+    if (editingExpenseId === null) {
+      // ---- NEW EXPENSE ----
+      if (state.wallet.cash < amount) {
+        showToast('⚠️ Not enough cash balance!'); return;
+      }
       state.wallet.cash -= amount;
-      cat[period].push({ id: generateId(), amount, time: getCurrentTimeStr() });
+      state.expenses.push({
+        id:     generateId(),
+        title:  title,
+        amount: amount,
+        date:   new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
+      });
       showToast('✅ Expense added!');
     } else {
-      // Edit existing entry
-      const entry = cat[period].find(e => e.id === entryId);
-      if (!entry) return;
-      const diff = amount - entry.amount;
-      if (diff > 0 && state.wallet.cash < diff) { showToast('⚠️ Not enough cash balance!'); return; }
+      // ---- EDIT EXPENSE ----
+      const exp = state.expenses.find(e => e.id === editingExpenseId);
+      if (!exp) return;
+
+      // Restore old amount, then deduct new amount
+      const diff = amount - exp.amount;
+      if (diff > 0 && state.wallet.cash < diff) {
+        showToast('⚠️ Not enough cash balance!'); return;
+      }
       state.wallet.cash -= diff;
-      entry.amount = amount;
+      exp.title  = title;
+      exp.amount = amount;
+      exp.date   = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
       showToast('✅ Expense updated!');
     }
 
     saveState();
     render();
-    closeModal('entryModal');
+    closeModal('expenseModal');
   }
 
-  function deleteEntry(catName, period, entryId) {
-    const cat = state.dailyExpenses.categories[catName];
-    if (!cat || !cat[period]) return;
-    const entry = cat[period].find(e => e.id === entryId);
-    if (!entry) return;
+  function deleteExpense(id) {
+    const exp = state.expenses.find(e => e.id === id);
+    if (!exp) return;
 
-    if (!confirm('Delete this ' + fmt(entry.amount) + ' expense?\n\nThe amount will be restored to your Cash Wallet.')) return;
+    // Confirm before permanently deleting
+    if (!confirm(`Delete "${exp.title}" (${fmt(exp.amount)})?\n\nThe amount will be restored to your Cash Wallet.`)) return;
 
-    state.wallet.cash += entry.amount;
-    cat[period] = cat[period].filter(e => e.id !== entryId);
+    // Restore deducted amount to cash wallet
+    state.wallet.cash += exp.amount;
+    state.expenses = state.expenses.filter(e => e.id !== id);
+
     saveState();
     render();
     showToast('🗑️ Expense deleted & balance restored.');
@@ -966,14 +654,6 @@
     });
   });
 
-  // "+" button to add category
-  document.getElementById('addCategoryBtn').addEventListener('click', openAddCategoryModal);
-
-  // Enter key in category name input triggers save
-  document.getElementById('categoryNameInput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') saveCategory();
-  });
-
   /* =========================================
      TOAST
   ========================================= */
@@ -991,9 +671,6 @@
   ========================================= */
   loadState();
   render();
-
-  // Check for daily reset every minute (catches the 01:00 transition)
-  setInterval(() => { checkDailyReset(); render(); }, RESET_CHECK_INTERVAL_MS);
 </script>
 </body>
 </html>
