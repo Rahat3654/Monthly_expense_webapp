@@ -635,7 +635,7 @@
     if (!amount || amount <= 0) { showToast('Please enter a valid amount.'); return; }
 
     if (editingExpenseId === null) {
-      // ---- NEW EXPENSE ----
+      // ---- NEW EXPENSE (or accumulate into existing same-title + same-type entry) ----
       if (expenseType === 'add') {
         if (state.wallet.cash < amount) {
           showToast('⚠️ Not enough cash balance!'); return;
@@ -645,14 +645,27 @@
         // subtract/refund: money comes back to wallet
         state.wallet.cash += amount;
       }
-      state.expenses.push({
-        id:     generateId(),
-        title:  title,
-        amount: amount,
-        type:   expenseType,
-        date:   new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
-      });
-      showToast(expenseType === 'add' ? '✅ Expense added!' : '✅ Refund recorded!');
+
+      // Accumulate if an entry with the same title (case-insensitive) and type already exists
+      const normalizedTitle = title.toLowerCase();
+      const existing = state.expenses.find(
+        e => e.title.toLowerCase() === normalizedTitle && e.type === expenseType
+      );
+
+      if (existing) {
+        existing.amount += amount;
+        existing.date = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+        showToast(expenseType === 'add' ? '✅ Expense accumulated!' : '✅ Refund accumulated!');
+      } else {
+        state.expenses.push({
+          id:     generateId(),
+          title:  title,
+          amount: amount,
+          type:   expenseType,
+          date:   new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
+        });
+        showToast(expenseType === 'add' ? '✅ Expense added!' : '✅ Refund recorded!');
+      }
     } else {
       // ---- EDIT EXPENSE ----
       const exp = state.expenses.find(e => e.id === editingExpenseId);
